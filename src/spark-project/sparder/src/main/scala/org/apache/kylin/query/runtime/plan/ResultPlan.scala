@@ -43,6 +43,7 @@ import org.apache.spark.sql.execution._
 import org.apache.spark.sql.hive.QueryMetricUtils
 import org.apache.spark.sql.util.{SparderConstants, SparderTypeUtil}
 import org.apache.spark.sql.{DataFrame, Row, SaveMode, SparderEnv}
+import org.apache.spark.sql.execution.gluten.KylinFileSourceScanExecTransformer
 
 import scala.collection.JavaConverters._
 import scala.collection.convert.ImplicitConversions.`iterator asScala`
@@ -219,6 +220,12 @@ object ResultPlan extends LogEx {
     exPlan match {
       case exec: KylinFileSourceScanExec =>
         val sourceScanRows = exec.getSourceScanRows
+        val finalScanRows = if (stageLimitRows > 0) Math.min(stageLimitRows, sourceScanRows) else sourceScanRows
+        rowsCounter.addAndGet(finalScanRows)
+        logDebug(s"Apply limit to source scan, sourceScanRows: $sourceScanRows, " +
+          s"stageLimit: $stageLimitRows, finalScanRows: $finalScanRows")
+      case transformer: KylinFileSourceScanExecTransformer =>
+        val sourceScanRows = transformer.getSourceScanRows
         val finalScanRows = if (stageLimitRows > 0) Math.min(stageLimitRows, sourceScanRows) else sourceScanRows
         rowsCounter.addAndGet(finalScanRows)
         logDebug(s"Apply limit to source scan, sourceScanRows: $sourceScanRows, " +
