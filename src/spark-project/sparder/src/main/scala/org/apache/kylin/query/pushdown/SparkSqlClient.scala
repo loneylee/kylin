@@ -19,6 +19,7 @@
 package org.apache.kylin.query.pushdown
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.gluten.test.FallbackUtil
 import org.apache.kylin.common.util.{DateFormat, HadoopUtil, Pair}
 import org.apache.kylin.common.{KapConfig, KylinConfig, QueryContext}
 import org.apache.kylin.guava30.shaded.common.collect.ImmutableList
@@ -201,6 +202,8 @@ object SparkSqlClient {
       val (jobCount, stageCount, taskCount) = QueryMetricUtils.collectTaskRelatedMetrics(jobGroup, ss.sparkContext)
       QueryContext.current().getMetrics.setScanRows(scanRows)
       QueryContext.current().getMetrics.setScanBytes(scanBytes)
+      val glutenFallback = FallbackUtil.hasFallback(df.queryExecution.executedPlan)
+      QueryContext.current().getMetrics.setGlutenFallback(glutenFallback)
       QueryContext.current().getMetrics.setQueryJobCount(jobCount)
       QueryContext.current().getMetrics.setQueryStageCount(stageCount)
       QueryContext.current().getMetrics.setQueryTaskCount(taskCount)

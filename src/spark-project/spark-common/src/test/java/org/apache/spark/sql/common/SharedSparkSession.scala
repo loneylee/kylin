@@ -17,17 +17,17 @@
  */
 package org.apache.spark.sql.common
 
-import java.io.File
-
 import org.apache.commons.io.FileUtils
 import org.apache.hadoop.hive.conf.HiveConf.ConfVars
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.internal.Logging
-import org.apache.spark.sql.{DataFrame, SQLContext, SQLImplicits, SparkSession}
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.catalyst.analysis.NoSuchTableException
+import org.apache.spark.sql.{DataFrame, SQLContext, SQLImplicits, SparkSession}
 import org.apache.spark.util.Utils
+import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
+
+import java.io.File
 
 trait SharedSparkSession
     extends BeforeAndAfterAll
@@ -66,7 +66,8 @@ trait SharedSparkSession
     initSpark()
   }
 
-   def initSpark(): Unit = {
+  def initSpark(): Unit = {
+    GlutenTestConfig.configGluten(conf)
     _spark = SparkSession.builder
       .master(master)
       .appName(getClass.getSimpleName)
