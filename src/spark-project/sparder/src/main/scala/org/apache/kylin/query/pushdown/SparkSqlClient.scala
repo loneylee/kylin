@@ -18,9 +18,8 @@
 
 package org.apache.kylin.query.pushdown
 
-import io.glutenproject.utils.FallbackUtil
-
 import org.apache.commons.lang3.StringUtils
+import org.apache.gluten.utils.FallbackUtil
 import org.apache.kylin.common.util.{DateFormat, HadoopUtil, Pair}
 import org.apache.kylin.common.{KapConfig, KylinConfig, QueryContext}
 import org.apache.kylin.guava30.shaded.common.collect.ImmutableList
@@ -37,7 +36,6 @@ import org.apache.spark.sql.hive.utils.ResourceDetectUtils
 import org.apache.spark.sql.util.SparderTypeUtil
 import org.apache.spark.sql.{DataFrame, Row, SparderEnv, SparkSession}
 import org.slf4j.{Logger, LoggerFactory}
-
 import org.apache.kylin.cache.kylin.KylinCacheFileSystem
 import org.apache.kylin.softaffinity.SoftAffinityManager
 import org.apache.kylin.fileseg.FileSegments

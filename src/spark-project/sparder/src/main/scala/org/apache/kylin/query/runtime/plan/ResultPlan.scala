@@ -44,7 +44,7 @@ import org.apache.spark.sql.hive.QueryMetricUtils
 import org.apache.spark.sql.util.{SparderConstants, SparderTypeUtil}
 import org.apache.spark.sql.{DataFrame, Row, SaveMode, SparderEnv}
 import org.apache.spark.sql.execution.gluten.KylinFileSourceScanExecTransformer
-import io.glutenproject.utils.{FallbackUtil, QueryPlanSelector}
+import org.apache.gluten.utils.{FallbackUtil, QueryPlanSelector}
 
 import scala.collection.JavaConverters._
 import scala.collection.convert.ImplicitConversions.`iterator asScala`

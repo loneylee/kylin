@@ -37,7 +37,7 @@ import org.apache.spark.sql.catalyst.expressions.{Expression, SubqueryExpression
 import org.apache.spark.sql.execution._
 import org.apache.spark.sql.execution.columnar.InMemoryTableScanExec
 import org.apache.spark.sql.execution.datasources.FileIndex
-import org.apache.spark.sql.execution.exchange.{BroadcastExchangeExec, ReusedExchangeExec}
+import org.apache.spark.sql.execution.exchange.{BroadcastExchangeLike, ReusedExchangeExec}
 import org.apache.spark.sql.hive.execution.HiveTableScanExec
 import org.apache.spark.sql.sources.NBaseRelation
 import org.apache.spark.util.ThreadUtils
@@ -129,8 +129,13 @@ object ResourceDetectUtils extends Logging {
     plan.foreach {
       case node: LeafExecNode =>
         val pn = node match {
-          case ree: ReusedExchangeExec if ree.child.isInstanceOf[BroadcastExchangeExec] => 1
-          case _ => leafNodePartitionsLengthMap.getOrElseUpdate(node.nodeName, node.execute().partitions.length)
+          case ree: ReusedExchangeExec if ree.child.isInstanceOf[BroadcastExchangeLike] => 1
+          case _ => val partitionsLength = if (node.supportsColumnar) {
+            node.executeColumnar().partitions.length
+          } else {
+            node.execute().partitions.length
+          }
+            leafNodePartitionsLengthMap.getOrElseUpdate(node.nodeName, partitionsLength)
         }
         pNum = pNum + pn
         logInfo(s"${node.nodeName} partition size $pn")
