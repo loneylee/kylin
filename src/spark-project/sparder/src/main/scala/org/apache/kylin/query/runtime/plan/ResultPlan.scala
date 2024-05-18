@@ -295,7 +295,7 @@ object ResultPlan extends LogEx {
       }
 
       val partitionColumns = l.resolve(
-        fsRelation.partitionSchema, fsRelation.sparkSession.sessionState.analyzer.resolver)
+        fsRelation.partitionSchema, fsRelation.sqlContext.sparkSession.sessionState.analyzer.resolver)
       val partitionSet = AttributeSet(partitionColumns)
       val dataFilters = normalizedFilters.filter(_.references.intersect(partitionSet).isEmpty)
       val names = fsRelation.dataSchema.map(schema => schema.name)
