@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong
 import java.{lang, util}
 import org.apache.calcite.rel.`type`.{RelDataType, RelDataTypeField}
 import org.apache.commons.io.IOUtils
-import org.apache.gluten.utils.{FallbackUtil, QueryPlanSelector}
+import org.apache.gluten.utils.QueryPlanSelector
 import org.apache.hadoop.fs.Path
 import org.apache.kylin.common.exception.code.ErrorCodeServer
 import org.apache.kylin.common.exception.{BigQueryException, NewQueryRefuseException}
@@ -137,8 +137,6 @@ object ResultPlan extends LogEx {
       QueryContext.current.record("collect_result")
 
       val (scanRows, scanBytes) = QueryMetricUtils.collectScanMetrics(df.queryExecution.executedPlan)
-      val glutenFallback = FallbackUtil.hasFallback(df.queryExecution.executedPlan)
-      QueryContext.current().getMetrics.setGlutenFallback(glutenFallback)
       val (jobCount, stageCount, taskCount) = QueryMetricUtils.collectTaskRelatedMetrics(jobGroup, sparkContext)
       QueryContext.current().getMetrics.setScanRows(scanRows)
 
